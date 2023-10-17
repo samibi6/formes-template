@@ -7,9 +7,15 @@ use Opmvpc\Formes\Rectangle;
 use Opmvpc\Formes\Cercle; 
 use Opmvpc\Formes\Ligne; 
 use Opmvpc\Formes\Polygone;
+use Opmvpc\Formes\Ellipse;
+use Opmvpc\Formes\Path;
+use Opmvpc\Formes\Polyline;
 use SVG\Nodes\Shapes\SVGCircle;
+use SVG\Nodes\Shapes\SVGEllipse;
 use SVG\Nodes\Shapes\SVGLine;
+use SVG\Nodes\Shapes\SVGPath;
 use SVG\Nodes\Shapes\SVGPolygon;
+use SVG\Nodes\Shapes\SVGPolyline;
 use SVG\Nodes\Shapes\SVGRect;
 use SVG\SVG;
 
@@ -57,6 +63,26 @@ class SVGRenderer implements Renderer {
                     $rect = new SVGRect($forme->getPoint()->getX(), $forme->getPoint()->getY(), $forme->getHeight(), $forme->getWidth());
                     $rect->setStyle('fill', $forme->getCouleur());
                     $doc->addChild($rect);
+                    break;
+                case Ellipse::class:
+                    $ellipse = new SVGEllipse($forme->getCentre()->getX(), $forme->getCentre()->getY(), $forme->getRayon()->getX(), $forme->getRayon()->getY());
+                    $ellipse->setStyle('fill', $forme->getCouleur());
+                    $doc->addChild($ellipse);
+                    break;
+                case Path::class:
+                    $path = new SVGPath($forme->getDesc());
+                    $path->setStyle('fill', $forme->getCouleur());
+                    $doc->addChild($path);
+                    break;
+                case Polyline::class:
+                    $pointsArray = $forme->getPoints();
+                    $mainArray = [];
+                    foreach($pointsArray as $point){
+                        array_push($mainArray, [$point->getX(), $point->getY()]);
+                    }
+                    $polyline = new SVGPolyline($mainArray);
+                    $polyline->setStyle('fill', $forme->getCouleur());
+                    $doc->addChild($polyline);
                     break;
             }
         }
